@@ -57,7 +57,7 @@ Initialize the plugin on the `window.onload` event.
 ```js
 window.onload = function() {
   Particles.init({
-    selector: '.particle-background'
+    selector: '.background'
   });
 };
 ```

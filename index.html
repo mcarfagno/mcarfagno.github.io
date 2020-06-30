@@ -36,7 +36,8 @@
         </nav>
         <!-- Masthead-->
         <!-- <header class="masthead bg-primary text-white text-center"> -->
-        <header class="masthead bg-primary text-black text-center">
+        <!-- <header class="masthead bg-primary text-black text-center"> -->
+        <header class=" masthead  bg-primary text-black text-center">
             <div class="container d-flex align-items-center flex-column">
                 <!-- Masthead Avatar Image-->
                 <img class="masthead-avatar mb-5" src="assets/img/avataaars.svg" alt="" />
@@ -50,11 +51,12 @@
                     <!-- <div class="divider-custom-line"></div> -->
                 </div>
                 <!-- Masthead Subheading-->
-                <p class="masthead-subheading font-weight-light mb-0">Robotics Developer - AI Enthusiast </p>
+                <p class="masthead-subheading font-weight-light mb-0">Robotics Software Engineer - AI Enthusiast </p>
             </div>
         </header>
         <!-- Portfolio Section-->
         <section class="page-section portfolio" id="portfolio">
+            <canvas class="particle-background"></canvas>
             <div class="container">
                 <!-- Portfolio Section Heading-->
                 <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Portfolio</h2>
@@ -379,5 +381,17 @@
         <script src="assets/mail/contact_me.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
+
+        <!-- Particles -->
+        <script src="js/particles/dist/particles.min.js"></script>
+        <script type="text/javascript">
+        window.onload = function() {
+          Particles.init({
+            selector: '.particle-background',
+            connectParticles: 'true'
+          });
+        };
+        </script>
+
     </body>
 </html>
