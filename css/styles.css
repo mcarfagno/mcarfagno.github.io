@@ -2023,7 +2023,8 @@ pre code {
 .form-control:focus {
   color: #495057;
   background-color: #fff;
-  border-color: #6bebd1;
+  /* border-color: #6bebd1; */
+  border-color: #2E6EC3
   outline: 0;
   /* box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25); */
   box-shadow: 0 0 0 0.2rem rgba(47, 112, 219, 0.25);
@@ -2493,7 +2494,7 @@ fieldset:disabled a.btn {
   /* border-color: #148f77; */
   background-color: #2E6EC3;
   border-color: #2E6EC3;
-  box-shadow: 0 0 0 0.2rem rgba(60, 198, 171, 0.5);
+  /* box-shadow: 0 0 0 0.2rem rgba(60, 198, 171, 0.5); */
 }
 .btn-primary.disabled, .btn-primary:disabled {
   color: #fff;
@@ -2510,7 +2511,7 @@ fieldset:disabled a.btn {
   border-color: #2E6EC3;
 }
 .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .show > .btn-primary.dropdown-toggle:focus {
-  box-shadow: 0 0 0 0.2rem rgba(60, 198, 171, 0.5);
+  /* box-shadow: 0 0 0 0.2rem rgba(60, 198, 171, 0.5); */
 }
 
 .btn-secondary {
@@ -3570,7 +3571,8 @@ input[type=button].btn-block {
   box-shadow: 0 0 0 0.2rem rgba(47, 112, 219, 0.25);
 }
 .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
-  border-color: #6bebd1;
+  /* border-color: #6bebd1; */
+  border-color: #2E6EC3
 }
 .custom-control-input:not(:disabled):active ~ .custom-control-label::before {
   color: #fff;
@@ -3697,7 +3699,8 @@ input[type=button].btn-block {
           appearance: none;
 }
 .custom-select:focus {
-  border-color: #6bebd1;
+  /* border-color: #6bebd1; */
+  border-color: #2E6EC3
   outline: 0;
   /* box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25); */
   box-shadow: 0 0 0 0.2rem rgba(47, 112, 219, 0.25);
@@ -3756,7 +3759,8 @@ input[type=button].btn-block {
   opacity: 0;
 }
 .custom-file-input:focus ~ .custom-file-label {
-  border-color: #6bebd1;
+  /* border-color: #6bebd1; */
+  border-color: #2E6EC3
   /* box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25); */
   box-shadow: 0 0 0 0.2rem rgba(47, 112, 219, 0.25);
 }
