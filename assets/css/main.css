@@ -3880,7 +3880,7 @@ input, select, textarea {
 
 	#intro {
 		background-attachment: fixed;
-		/* background-image: url("images/intro.svg"); */
+		background-image: url("images/intro.svg");
 		background-color: #121217
 		background-position: top right;
 		background-repeat: no-repeat;
