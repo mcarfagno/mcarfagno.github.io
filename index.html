@@ -21,7 +21,7 @@
 						<ul>
 							<li><a href="#intro">Welcome</a></li>
 							<li><a href="#one">Projects</a></li>
-							<!-- <li><a href="#two">What we do</a></li> -->
+							<li><a href="#two">About</a></li>
 							<li><a href="#three">Get in touch</a></li>
 						</ul>
 					</nav>
@@ -33,13 +33,13 @@
 
 				<!-- Intro -->
 					<section id="intro" class="wrapper style1 fullscreen fade-up">
-						<div class="inner">
+						<!-- <div class="inner">
 						<p><span class="image fit left"><img src="images/avataaars.png" alt="" sizes="(max-width: 150px) 100vw, (max-width: 450px) 50vw, 300px"/></span></p>
-						</div>
+						</div> -->
 						<div class="inner">
 							<h1>Marcello Carfagno</h1>
 							<hr />
-							<p>Robotics Software Engineer, AI Enthusiast</p>
+							<p>Robotics Software Engineer, AI Enthusiast, Sh***y Pianist</p>
 							<ul class="actions">
 								<li><a href="#one" class="button scrolly">Check out my projects</a></li>
 							</ul>
@@ -50,11 +50,11 @@
 					<section id="one" class="wrapper style2 spotlights">
 
 						<section>
-							<a href="#" class="image"><img src="images/previews/rl_project.jpg" alt="" data-position="center center" /></a>
+							<a href="rl.html" class="image"><img src="images/previews/rl_project.jpg" alt="" data-position="center center" /></a>
 							<div class="content">
 								<div class="inner">
 									<h2>RL Project</h2>
-									<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
+									<p>Implementation of Reinforcement Learning Algorithms in Pytorch to solve OpenAI gym environments. Plus developement of custom enviroments for Robotics applications.</p>
 									<ul class="actions">
 										<li><a href="rl.html" class="button">Learn more</a></li>
 									</ul>
@@ -67,7 +67,7 @@
 								<div class="content">
 									<div class="inner">
 										<h2>Quadruped Robot Project</h2>
-										<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
+										<p>Created a simulated dog robot based on Spot Mini, and I am looking into developing kinematics controller for stace and gait. a Work in Progress...</p>
 										<ul class="actions">
 											<li><a href="generic.html" class="button">Learn more</a></li>
 										</ul>
@@ -80,7 +80,7 @@
 								<div class="content">
 									<div class="inner">
 										<h2>MPC Project</h2>
-										<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
+										<p>Design and implementation of a Model Predictive Controller for a simulated racing car.</p>
 										<ul class="actions">
 											<li><a href="generic.html" class="button">Learn more</a></li>
 										</ul>
@@ -88,12 +88,15 @@
 								</div>
 							</section>
 
+						</section>
+
+						<section id="one2" class="wrapper style2 spotlights">
 							<section>
 								<a href="#" class="image"><img src="images/previews/astar_project.png" alt="" data-position="center center" /></a>
 								<div class="content">
 									<div class="inner">
 										<h2>Path Planning Project</h2>
-										<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
+										<p>Study on the A* pathfinding algorithm. The goal was to use ROS standard occupancy maps to find collision free path to a goal.</p>
 										<ul class="actions">
 											<li><a href="astar.html" class="button">Learn more</a></li>
 										</ul>
@@ -106,7 +109,7 @@
 								<div class="content">
 									<div class="inner">
 										<h2>Kalmann Filter Project</h2>
-										<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
+										<p>Kalman Filter for tracking moving targets using radar scans.</p>
 										<ul class="actions">
 											<li><a href="ekf.html" class="button">Learn more</a></li>
 										</ul>
@@ -119,7 +122,7 @@
 								<div class="content">
 									<div class="inner">
 										<h2>Pick and Place Project</h2>
-										<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus.</p>
+										<p>ROS based simulation of a robotic arm performing pick and place tasks with random spawing targets.</p>
 										<ul class="actions">
 											<li><a href="generic.html" class="button">Learn more</a></li>
 										</ul>
@@ -129,11 +132,12 @@
 
 					</section>
 
+
 				<!-- Two -->
-					<!-- <section id="two" class="wrapper style3 fade-up">
+					<section id="two" class="wrapper style3 fade-up">
 						<div class="inner">
-							<h2>What we do</h2>
-							<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
+							<h2>About</h2>
+							<!-- <p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
 							<div class="features">
 								<section>
 									<span class="icon solid major fa-code"></span>
@@ -165,20 +169,28 @@
 									<h3>Aliquam urna dapibus</h3>
 									<p>Phasellus convallis elit id ullam corper amet et pulvinar. Duis aliquam turpis mauris, sed ultricies erat dapibus.</p>
 								</section>
-							</div>
-							<ul class="actions">
+							</div> -->
+							<!-- <ul class="actions">
 								<li><a href="generic.html" class="button">Learn more</a></li>
-							</ul>
+							</ul> -->
+							<hr />
+							<div class="split style1">
+								<section>
+
+								</section>
+								<section>
+
+								</section>
 						</div>
-					</section> -->
+					</section>
 
 				<!-- Three -->
 					<section id="three" class="wrapper style1 fade-up">
 						<div class="inner">
 							<h2>Get in touch</h2>
-							<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
-							<div class="split style1">
-								<section>
+							<p>Check out my Github for code. Professional enquiries please get in touch on linkedin</p>
+							<div class=" style1">
+								<!-- <section>
 									<form method="post" action="#">
 										<div class="fields">
 											<div class="field half">
@@ -198,10 +210,10 @@
 											<li><a href="" class="button submit">Send Message</a></li>
 										</ul>
 									</form>
-								</section>
+								</section> -->
 								<section>
 									<ul class="contact">
-										<li>
+										<!-- <li>
 											<h3>Address</h3>
 											<span>12345 Somewhere Road #654<br />
 											Nashville, TN 00000-0000<br />
@@ -216,13 +228,11 @@
 											<span>(000) 000-0000</span>
 										</li>
 										<li>
-											<h3>Social</h3>
+											<h3>Social</h3> -->
 											<ul class="icons">
-												<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-												<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-												<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-												<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-												<li><a href="#" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+												<li><a href="https://github.com/mcarfagno" class="icon brands fa-github fa-2x"><span class="label">GitHub</span></a></li>
+												<li><a href="#" class="icon brands fa-instagram fa-2x"><span class="label">Instagram</span></a></li>
+												<li><a href="https://www.linkedin.com/in/marcello-carfagno" class="icon brands fa-linkedin-in fa-2x"><span class="label">LinkedIn</span></a></li>
 											</ul>
 										</li>
 									</ul>
