@@ -39,33 +39,106 @@
 								<li><a href="#" class="icon brands fab fa-python"><span class="label">python</span></a></li>
 							</ul>
 
+							<p>For this project I got inspired by Udacity <a href="https://www.udacity.com/course/self-driving-car-engineer-nanodegree--nd013">self-driving car nanodegree</a> Model Predictive Control Project. This was an extremely interesting (and challenging) project to complete. I am going to discuss a bit the theorical details before discussing my implementation and showing the results. </p>
+
 							<h3>What's MPC?</h3>
+							<p>The goal of the controller is to calculate the input/s to a system such that a desired reference is followed by its output. A model predictive controller accomplishes this by predicting the behaviour of the system's output and using an optimizer to find the best possible sequence of inputs. The main adavantage of this approach is that it can control complex <a> Multiple-Inputs Multiple-Outputs</a> systems and can handle multiple constrains. To further explain MPC applied to self-driving cars in a simple (I hope) way, there is a scheme of the control loop wich I will discuss: </p>
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
 						  <p><span class="image fit"><img src="images/mpc/diagram.png" alt=""/></span>
-							Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.</p>
+							Here MPC is used to keep the car's path (the system's <b> output </b>) to the middle of the lane (the controller's <b> reference</b>) by commanding the steering sequence (the system's <b> intput </b>). How it does that? At the current time, the MPC controller uses the car model to simulate the car’s path for the next T time steps (this is referred as the controller's <b> prediction horizon </b>) if the steering wheel would be turned in a certain way.</p>
+							<p>To find the sequence that minimizes the distance of the predicted car's path from the center of the lane by performing many simulations and approaches the search of the best steering sequence as an <b>optimization problem</b>. The cost function J of this optimization problem hence penalizes paths with large overall error but can also pensalize sharp steering changes so to have a smooth driving, so the predicted path with the smallest J gives the <em>optimal</em> solution. </p>
+							<p>MPC applies only the first step of this optimal sequence to the car. Based on the applied steering wheel angle, the car will travel some distance and the MPC will get a new measurement of the car's position, this may be different than what was predicted due to unmeasured disturbances (slippery road, etc... ). At the next time step, the prediction horizon shifts forward and the controller repeats the same cycle of calculations to compute the optimal steering wheel angle for the next time step. </p>
 							</div>
 
 							<h3>Kinematic Modelling</h3>
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
 						  <p><span class="image left"><img src="images/mpc/mpc_2_alt.png" alt="" width="50%"/></span>
-							Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.</p>
+							The MPC model is based on kinematic <a href="https://borrelli.me.berkeley.edu/pdfpub/IV_KinematicMPC_jason.pdf">bicycle model</a> defined by four <b>state variables</b> <code>x = [x-position, y-position, velocity, heading]</code> and two <b>input variables</b> <code>u = [steering angle, acceleration]</code>.
+							<br>The continuous model has been discretized according Euler's formula with a timestep <em>dt</em>. Altough it is a requirement of the optimization library that the system model should be <em>linear</em>, this is not the case due to trigonometric functions. So the linear system dynamics have been approximated using <a href="https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-30-feedback-control-systems-fall-2010/lecture-notes/MIT16_30F10_lec05.pdf"> Taylor's series expansion</a>, so that the state equations could be in the LTI form <code>x_tplus = A*x_t + B*u_t</code></p>
 							</div>
 							<!-- </div> -->
 
 							<h3>Optimization Problem</h3>
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
-							<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.</p>
-							
+							<p>This is the actual cost function I used in the optimization problem. It consists of four terms in <em>quadratic form</em>:
+								<div>
+								<ul>
+									<li>Crosstrack-error <b>cte</b>: longitudinal distance of the car's axle from the track.</li>
+									<li>Heading-error <b>psi</b>: difference between the car heading the track direction.</li>
+									<li>Velocity-error <b>cte</b>: difference between the car actual speed and the desired one.</li>
+									<li>Actuaction effort <b>u</b>: amplitude of the input, this is usefull for minimizing the energy used.</li>
+								</ul>
+							</div>
+							</p>
+
 							<p><span class="image fit"><img src="images/mpc/mpc.png" alt="" /></span></p>
 
-							<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.
+							<p>The Weights Q, R, K and P are used to tune the response of the controller. Moreover, for the solution to be meaningful, the optimizer has to mantain several <b>contraints</b>:
+							<div>
+								<ul>
+									<li>Starting condition of the car at that time.</li>
+									<li>The predicted dynamics have to obey the Linear Model between time steps, this is how the optimzer actually "simulates".</li>
+									<li>Maximum (and minimum) acceleration and steering angle have to be within those allowed by the car.</li>
+								</ul>
+							</p>
+							</div>
+
 							</div>
 							<!-- </div> -->
 
+							<h3>Track and Error Representation</h3>
+							<div class="row gtr-uniform">
+						  <p><span class="image right"><img src="images/mpc/fitted_poly.png" alt="" width="50%"/></span>
+							One idea wich I quite liked in Udacity's implementation, is how the track is represented in the MPC. Normally the track is described by a set of waypoints (so a long list of x and y coordinates), this causes a couple of issues: calculationg the errors cte and psi is both inaccurate and compuyationally expensive!
+							Becouse of this, every time step only a small number of points ahead of the car is considered and they are to used to fit a <b>polynomial curve</b> in the form y = f(x), wich is used in the MPC step.
+							<br>This is very useful for two reasons: the cte is now obtained directly by <code>cte = f(x) </code>, also, because <code>tan(theta_track) = f'(x)</code>, psi is obtained by <code>psi = theta-arctan(f'(x))</code></p>
+							</div>
+
+							<h3>Implementation</h3>
+							<div>
+						  <p>Now we are done with math (phew...). The Controller was implemented in Python using <a href="">CVXPY</a> optimization library using the <a href="">OSQP</a> solver. It solves convex (hence why everything had to be in linear form) problems very efficiently, wich allows the controller to run in tral time with a dt of 200 milliseconds.
+							This is what an optimization loop is implemented: </br>
+							<pre><code>x = cp.Variable((N, T+1))
+u = cp.Variable((M, T))
+
+#CVXPY Linear MPC problem statement
+cost = 0
+constr = []
+
+for t in range(T):
+
+    #cost += 1*cp.sum_squares(x[2,t]-1.0) # move car to
+    cost += 100*cp.sum_squares(x[3,t]-np.arctan(df(x_bar[0,t],K))) # psi
+    cost += 1*cp.sum_squares(f(x_bar[0,t],K)-x[1,t]) # cte
+    # Actuation effort
+    cost += cp.quad_form( u[:, t],1*np.eye(M))
+
+    # Actuation rate of change
+    if t < (T - 1):
+        cost += cp.quad_form(u[:, t + 1] - u[:, t], 1*np.eye(M))
+
+    # KINEMATICS constrains
+    A,B,C=get_linear_model(x_bar[:,t],u_bar[:,t])
+    constr += [x[:,t+1] == A@x[:,t] + B@u[:,t] + C.flatten()]
+
+# sums problem objectives and concatenates constraints.
+constr += [x[:,0] == x_bar[:,0]]
+constr += [x[2, :] <= MAX_SPEED]
+# constr += [x[2, :] >= MIN_SPEED]
+constr += [cp.abs(u[0, :]) <= MAX_ACC]
+constr += [cp.abs(u[1, :]) <= MAX_STEER]
+
+prob = cp.Problem(cp.Minimize(cost), constr)
+solution = prob.solve(solver=cp.OSQP, verbose=True)</code></pre>
+							For the simulation I used <a href="https://pybullet.org/wordpress/">Pybullet</a> (my favourite!) with a miniature racing car <a href="https://github.com/bulletphysics/bullet3/tree/master/examples/pybullet/gym/pybullet_data/racecarPybullet"> f10 </a>.
+							</p>
+							</div>
+
 							<p><h2>Results</h2>
+							Finally, here are some results. I am quite happy how it turned out. Unfortunately it performs a bit poorly near sharp corners (due to the polynomial fitting...) but it recovers very well and converges nicely. The green line is a visualization of the MPC predicted path over the control horizon.
 							<span class="image center"><img src="images/mpc/demo.gif" alt="" /></span></p>
 
 						</div>
