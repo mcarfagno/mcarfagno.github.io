@@ -33,44 +33,68 @@
 				<!-- Main -->
 					<section id="main" class="wrapper">
 						<div class="inner">
-							<h1 class="major">A* Pathfinding Algorithm </h1>
+							<h1 class="major">A* Pathfinding Algorithm in Occupancy Maps</h1>
 
 							<ul class="icons">
-								<li><a href="#" class="icon brands fab fa-python"><span class="label">python</span>Python</a></li>
+								<!-- <li><a href="#" class="icon brands fab fa-python"><span class="label">python</span>Python</a></li> -->
 								<li><a href="#" class="icon brands fab fa-cuttlefish"><span class="label">c++</span>++</a></li>
-								<li><a href="#" class="icon brands fab "><span class="label">opencv</span>Opencv</a></li>
+								<!-- <li><a href="#" class="icon brands fab "><span class="label">opencv</span>Opencv</a></li> -->
 							</ul>
+
+							<p>In this project my goal was to use <b>occupancy grid maps</b> to perform real-time path planning, for the sake of efficiciency I implemented everything in C++ and the OpenCV library.</p>
+
+							<h3>Pathfinding Pipeline</h3>
 
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
 							<p><span class="image left"><img src="images/astar/map.jpg" alt="" /></span>
-							Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.</p>
+							An occupancy map are a probabilistic representation of the environment. The basic idea of the occupancy grid is to represent a map of the environment as an evenly spacedfield of binary random variables ,represented as cells, each representing the presence of an obstacle at that location inthe environment.
+						  To perform pathfinding the map is thought as a more general <b>graph </b> structure: <b>nodes</b> represent the space locations of the cells and <b>edges</b> connect a cell to its neighbours.
+							<br> Although the algorithm aims to find the <b>lowest cost</b> path, and this is difficult if every node does not have a cost associated to it, everything which is not a wall is the same.
+							</p>
 							</div>
 							<!-- </div> -->
 
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
 						  <p><span class="image right"><img src="images/astar/distance_trasform_minmax.jpg" alt="" /></span>
-							Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.</p>
+							So the occupancy map will be used to compute a <b>costmap</b> in such a way locations closer to obstacles will have a higher cost and avoided by the algorithm.
+						  <br>The fist step is computing the euclidean distance of any cell from the closest obstacle, in this regard storing the maps in Matrix format and using Opencv's <a href="https://docs.opencv.org/3.4/d2/dbd/tutorial_distance_transform.html">Distance Trasform</a> was very usefull.
+							By applyng a <em>binary mask</em> on the freespace, computing the distance is very straightforard <code> distanceTransform(input_map, distance_map, DIST_L2, 5); </code>. The output is a float matrix where every element(pixel) is the <b>pixel-distance</b> value oh that element to the closest black(occupied space!) pixel.
+							<br>While this pixel distance is an <em>aprroximation</em> of the actual distance, the map <em>resolution</em> can be later used ho have a very good estimate.</p>
 							</div>
 							<!-- </div> -->
 
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
 							<p><span class="image left"><img src="images/astar/costmap.jpg" alt="" /></span>
-							Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.</p>
+							The distance value of every cell is used to compute its actual cost. The <b>cost function</b> assign maximum cost (<code>255</code>) to cells whose distance is lower than the robot size, then it has a rapidly decreasing exponential cost <code> int cost = (255 *std::exp(-1.0 * weight_ * (euclidean_distance - inscribed_radius_));</code>.
+						  <br> The resuting costmap is then used as input graph structure for the A Star algorithm.</p>
 							</div>
 							<!-- </div> -->
 
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
 							<p><span class="image right"><img src="images/astar/path.jpg" alt="" /></span>
-							Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique.</p>
+							Without explaining the agorithm in detail, when looking for a path (in wich order exploring the nodes) to the goal location, A Star acounts for two factors: the actual cost associated to that node plus an additional cost determined by an <b>heuristic function</b>.
+							The heuristic cost is the estimated distance of that location to the goal, this makes so the algorithm prefers potential paths wich seem to lead close to the goal, other than being distant from obstacles, this result in much faster execution time! </p>
 							</div>
 							<!-- </div> -->
 
 							<p><h2>Results</h2>
+							This overlay shows the freespace cost and the path selected by the algorithm.
 							<span class="image fit"><img src="images/astar/overlay_crop.jpg" alt="" /></span></p>
+
+							<p><h2>References</h2>
+								<div>
+									<ul>
+										<li><a href="https://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html">Red Blob Games blog</a> Outstanding resurece on A* theory and implemntation.</li>
+										<li><a href="http://wiki.ros.org/costmap_2d">ROS costmap Wiki</a>.</li>
+										<li><a href="https://github.com/ros-planning/navigation">ROS navigation stack repository</a>.</li>
+									</ul>
+								</p>
+								</div>
+							</p>
 
 						</div>
 					</section>
