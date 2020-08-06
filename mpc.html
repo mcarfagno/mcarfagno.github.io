@@ -55,7 +55,7 @@
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
 						  <p><span class="image left"><img src="images/mpc/mpc_2_alt.png" alt="" width="50%"/></span>
-							The MPC model is based on kinematic <a href="https://borrelli.me.berkeley.edu/pdfpub/IV_KinematicMPC_jason.pdf">bicycle model</a> defined by four <b>state variables</b> <code>x = [x-position, y-position, velocity, heading]</code> and two <b>input variables</b> <code>u = [steering angle, acceleration]</code>.
+							The MPC model is based on kinematic <a href="https://www.coursera.org/lecture/intro-self-driving-cars/lesson-2-the-kinematic-bicycle-model-Bi8yE">bicycle model</a> defined by four <b>state variables</b> <code>x = [x-position, y-position, velocity, heading]</code> and two <b>input variables</b> <code>u = [steering angle, acceleration]</code>.
 							<br>The continuous model has been discretized according Euler's formula with a timestep <em>dt</em>. Altough it is a requirement of the optimization library that the system model should be <em>linear</em>, this is not the case due to trigonometric functions. So the linear system dynamics have been approximated using <a href="https://ocw.mit.edu/courses/aeronautics-and-astronautics/16-30-feedback-control-systems-fall-2010/lecture-notes/MIT16_30F10_lec05.pdf"> Taylor's series expansion</a>, so that the state equations could be in the LTI form <code>x_tplus = A*x_t + B*u_t</code></p>
 							</div>
 							<!-- </div> -->
@@ -138,15 +138,23 @@ solution = prob.solve(solver=cp.OSQP, verbose=True)</code></pre>
 							</div>
 
 							<p><h2>Results</h2>
-							Finally, here are some results. I am quite happy how it turned out. Unfortunately it performs weirdly near sharp corners (due to the polynomial fitting...) but it recovers very well and converges nicely. The green line is a visualization of the MPC predicted path over the control horizon.
-							<span class="image fit"><img src="images/mpc/demo.gif" alt="" /></span></p>
+							Finally, here are some results: on the right is the actual racecar in pybullet, while on the left is a plotted demo of the MPC. I am quite happy how it turned out. Unfortunately it performs weirdly near sharp corners (due to the polynomial fitting...) but it recovers very well and converges nicely.
+							 The green line is a visualization of the MPC predicted path over the control horizon.</p>
+							<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-6"><span class="image fit"><img src="images/mpc/bullet2.gif" alt="results in pybullet" /></span></div>
+									<div class="col-6"><span class="image fit"><img src="images/mpc/demo.gif" alt="" /></span></div>
+								</div>
+							</div>
 
 							<p><h2>References</h2>
 								<div>
 									<ul>
-										<li>.</li>
-										<li>.</li>
-										<li>.</li>
+										<li><a href="https://www.udacity.com/course/self-driving-car-engineer-nanodegree--nd013">Udacity self-driving car nanodegree</a>.</li>
+										<li><a href="https://pybullet.org/wordpress/">Pybllet Robotics Simulator</a>.</li>
+										<li><a href="https://github.com/AtsushiSakai/PythonRobotics">PythonRobotics</a>.</li>
+										<li><a href="https://uk.mathworks.com/videos/series/understanding-model-predictive-control.html">Matlab understand MPC videos</a>.</li>
+										<li><a href="https://www.coursera.org/lecture/intro-self-driving-cars/lesson-2-the-kinematic-bicycle-model-Bi8yE">University of Toronto on Coursera</a>.</li>
 									</ul>
 								</p>
 								</div>
