@@ -63,23 +63,24 @@
 							<h3>Optimization Problem</h3>
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
-							<p>This is the actual cost function I used in the optimization problem. It consists of four terms in <em>quadratic form</em>:
+							<p>This is the actual cost function I used to solve the optimization problem at each time step t. It consists of five terms in <em>quadratic form</em>:
 								<div>
 								<ul>
 									<li>Crosstrack-error <b>cte</b>: longitudinal distance of the car's axle from the track.</li>
 									<li>Heading-error <b>psi</b>: difference between the car heading the track direction.</li>
 									<li>Velocity-error <b>cte</b>: difference between the car actual speed and the desired one.</li>
 									<li>Actuaction effort <b>u</b>: amplitude of the input, this is usefull for minimizing the energy used.</li>
+									<li>Actuaction effort <b>delta_u</b>: change in the input from one time step to the next, this is useful to have smooth driving.</li>
 								</ul>
 							</div>
 							</p>
 
 							<p><span class="image fit"><img src="images/mpc/mpc.png" alt="" /></span></p>
 
-							<p>The Weights Q, R, K and P are used to tune the response of the controller. Moreover, for the solution to be meaningful, the optimizer has to mantain several <b>contraints</b>:
+							<p>The <b>weight coefficients</b> Q, R, K, P and Z are used to tune the response of the controller. Moreover, for the solution to be meaningful, the optimizer has to mantain several <b>contraints</b>:
 							<div>
 								<ul>
-									<li>Starting condition of the car at that time.</li>
+									<li>Starting condition of the car's state at time step t equals the latest measurement.</li>
 									<li>The predicted dynamics have to obey the Linear Model between time steps, this is how the optimzer actually "simulates".</li>
 									<li>Maximum (and minimum) acceleration and steering angle have to be within those allowed by the car.</li>
 								</ul>
