@@ -63,26 +63,23 @@
 							<h3>Optimization Problem</h3>
 							<!-- <div class="box alt"> -->
 							<div class="row gtr-uniform">
-							<p>This is the actual cost function I used to solve the optimization problem at each time step t. It consists of five terms in <em>quadratic form</em>:
-								<div>
+							<p>This is the actual cost function I used to solve the optimization problem at each time step t. It consists of three terms in <em>quadratic form</em>:
 								<ul>
-									<li>Crosstrack-error <b>cte</b>: longitudinal distance of the car's axle from the track.</li>
-									<li>Heading-error <b>psi</b>: difference between the car heading the track direction.</li>
-									<li>Velocity-error <b>cte</b>: difference between the car actual speed and the desired one.</li>
+									<li>Tracking-error <b>delta_x</b>: error from desired car state, wich include position as well velocity and desired heading.</li>
 									<li>Actuaction effort <b>u</b>: amplitude of the input, this is usefull for minimizing the energy used.</li>
-									<li>Actuaction effort <b>delta_u</b>: change in the input from one time step to the next, this is useful to have smooth driving.</li>
+									<li>Actuaction rate of change <b>delta_u</b>: change in the input from one time step to the next, this is useful to have smooth driving.</li>
 								</ul>
-							</div>
 							</p>
 
 							<p><span class="image fit"><img src="images/mpc/mpc.png" alt="" /></span></p>
 
-							<p>The <b>weight coefficients</b> Q, R, K, P and Z are used to tune the response of the controller. Moreover, for the solution to be meaningful, the optimizer has to mantain several <b>contraints</b>:
+							<p>The <b>weight coefficients</b> Q, R and K are used to tune the response of the controller. Moreover, for the solution to be meaningful, the optimizer has to mantain several <b>contraints</b>:
 							<div>
 								<ul>
 									<li>Starting condition of the car's state at time step t equals the latest measurement.</li>
 									<li>The predicted dynamics have to obey the Linear Model between time steps, this is how the optimzer actually "simulates".</li>
 									<li>Maximum (and minimum) acceleration and steering angle have to be within those allowed by the car.</li>
+									<li>Maximum (and minimum) acceleration and steering angle rate of change have to be within those allowed by the car.</li>
 								</ul>
 							</p>
 							</div>
@@ -90,50 +87,66 @@
 							</div>
 							<!-- </div> -->
 
-							<h3>Track and Error Representation</h3>
-							<div class="row gtr-uniform">
-						  <p><span class="image right"><img src="images/mpc/fitted_poly.png" alt="" width="50%"/></span>
-							One idea wich I quite liked in Udacity's implementation, is how the track is represented in the MPC. Normally the track is described by a set of waypoints (so a long list of x and y coordinates), this causes a couple of issues: calculationg the errors cte and psi is both inaccurate and compuyationally expensive!
-							Becouse of this, every time step only a small number of points ahead of the car is considered and they are to used to fit a <b>polynomial curve</b> in the form y = f(x), wich is used in the MPC step.
-							<br>This is very useful for two reasons: the cte is now obtained directly by <code>cte = f(x) </code>, also, because <code>tan(theta_track) = f'(x)</code>, psi is obtained by <code>psi = theta-arctan(f'(x))</code></p>
+							<h3>Tracking Reference</h3>
+						  <p>The track is represented by a collection of evenly spaced points. This can be used very easily build the reference trajectory for the car:
+							<div>
+							<ul>
+								<li> TODO... </li>
+								<li> TODO... </li>
+								<li> TODO... </li>
+							</ul>
 							</div>
+							</p>
 
 							<h3>Implementation</h3>
 							<div>
 						  <p>Now we are done with math (phew...). The Controller was implemented in Python using <a href="">CVXPY</a> optimization library using the <a href="">OSQP</a> solver. It solves convex (hence why everything had to be in linear form) problems very efficiently, wich allows the controller to run in tral time with a dt of 200 milliseconds.
 							This is what an optimization loop is implemented: </br>
-							<pre><code>x = cp.Variable((N, T+1))
-u = cp.Variable((M, T))
-
-#CVXPY Linear MPC problem statement
+							<pre><code>#CVXPY Linear MPC problem statement
+P = mpc_configuration()
 cost = 0
 constr = []
+x = cp.Variable((P.N, P.T+1))
+u = cp.Variable((P.M, P.T))
 
-for t in range(T):
+# Cost Matrices
+Q = np.diag([20,20,10,0])   #state error cost
+Qf = np.diag([10,10,10,10]) #state final error cost
+R = np.diag([10,10])        #input cost
+K = np.diag([10,10])        #input rate of change cost
 
-    #cost += 1*cp.sum_squares(x[2,t]-1.0) # move car to
-    cost += 100*cp.sum_squares(x[3,t]-np.arctan(df(x_bar[0,t],K))) # psi
-    cost += 1*cp.sum_squares(f(x_bar[0,t],K)-x[1,t]) # cte
+#Get Reference_traj
+x_ref, d_ref = get_ref_trajectory(x_bar[:,0] ,track, REF_VEL)
+
+#Prediction Horizon
+for t in range(P.T):
+
+    # Tracking Error
+    cost += cp.quad_form(x[:,t] - x_ref[:,t], Q)
+
     # Actuation effort
-    cost += cp.quad_form( u[:, t],1*np.eye(M))
+    cost += cp.quad_form(u[:,t], R)
 
     # Actuation rate of change
-    if t < (T - 1):
-        cost += cp.quad_form(u[:, t + 1] - u[:, t], 1*np.eye(M))
+    if t < (P.T - 1):
+        cost += cp.quad_form(u[:,t+1] - u[:,t], K)
+        constr+= [cp.abs(u[0, t + 1] - u[0, t])/P.dt <= MAX_D_ACC]    #max acc rate of change
+        constr += [cp.abs(u[1, t + 1] - u[1, t])/P.dt <= MAX_D_STEER] #max steer rate of change
 
-    # KINEMATICS constrains
-    A,B,C=get_linear_model(x_bar[:,t],u_bar[:,t])
+    # Kinrmatics Constrains (Linearized model)
+    A,B,C = get_linear_model(x_bar[:,t], u_bar[:,t])
     constr += [x[:,t+1] == A@x[:,t] + B@u[:,t] + C.flatten()]
 
 # sums problem objectives and concatenates constraints.
-constr += [x[:,0] == x_bar[:,0]]
-constr += [x[2, :] <= MAX_SPEED]
-# constr += [x[2, :] >= MIN_SPEED]
-constr += [cp.abs(u[0, :]) <= MAX_ACC]
-constr += [cp.abs(u[1, :]) <= MAX_STEER]
+constr += [x[:,0] == x_bar[:,0]]           #starting condition
+constr += [x[2,:] <= MAX_SPEED]           #max speed
+constr += [x[2,:] >= 0.0]                 #min_speed (not really needed)
+constr += [cp.abs(u[0,:]) <= MAX_ACC]     #max acc
+constr += [cp.abs(u[1,:]) <= MAX_STEER]   #max steer
 
+# Solve
 prob = cp.Problem(cp.Minimize(cost), constr)
-solution = prob.solve(solver=cp.OSQP, verbose=True)</code></pre>
+prob.solve(solver=cp.OSQP, verbose=False)</code></pre>
 							For the simulation I used <a href="https://pybullet.org/wordpress/">Pybullet</a> (my favourite!) with a miniature racing car <a href="https://github.com/bulletphysics/bullet3/tree/master/examples/pybullet/gym/pybullet_data/racecarPybullet"> f10 </a>.
 							</p>
 							</div>
@@ -143,7 +156,7 @@ solution = prob.solve(solver=cp.OSQP, verbose=True)</code></pre>
 							 The green line is a visualization of the MPC predicted path over the control horizon.</p>
 							<div class="box alt">
 								<div class="row gtr-uniform">
-									<div class="col-6"><span class="image fit"><img src="images/mpc/bullet2.gif" alt="results in pybullet" /></span></div>
+									<div class="col-6"><span class="image fit"><img src="images/mpc/demo_bullet.gif" alt="results in pybullet" /></span></div>
 									<div class="col-6"><span class="image fit"><img src="images/mpc/demo.gif" alt="" /></span></div>
 								</div>
 							</div>
